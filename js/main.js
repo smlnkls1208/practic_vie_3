@@ -15,6 +15,8 @@ Vue.component('card-component', {
             <p>{{ card.description }}</p>
             <p><strong>Создано:</strong> {{ card.createdAt }}</p>
             <p><strong>Дедлайн:</strong> {{ card.deadline }}</p>
+            <p v-if="card.returnReason"><strong>Причина возврата:</strong> {{ card.returnReason }}</p>
+            <p v-if="card.status"><strong>Статус:</strong> {{ card.status }}</p>
             <div class="card-buttons">
                 <button v-if="columnIndex < 3" @click="$emit('move-card', columnIndex + 1)" class="move">Переместить</button>
                 <button v-if="columnIndex === 0" @click="$emit('delete-card')" class="delete">Удалить</button>
@@ -128,6 +130,11 @@ new Vue({
         },
         moveCard(fromColumnIndex, cardIndex, toColumnIndex, reason) {
             const card = this.columns[fromColumnIndex].cards.splice(cardIndex, 1)[0]
+            if (toColumnIndex === 3) {
+                const deadline = new Date(card.deadline)
+                const now = new Date()
+                card.status = deadline < now ? 'Просрочено' : 'Выполнено в срок'
+            }
             if (reason) {
                 card.returnReason = reason
             }
