@@ -16,6 +16,7 @@ Vue.component('card-component', {
             <p><strong>Создано:</strong> {{ card.createdAt }}</p>
             <p><strong>Дедлайн:</strong> {{ card.deadline }}</p>
             <div class="card-buttons">
+                <button v-if="columnIndex < 3" @click="$emit('move-card', columnIndex + 1)" class="move">Переместить</button>
                 <button v-if="columnIndex === 0" @click="$emit('delete-card')" class="delete">Удалить</button>
             </div>
         </div>
@@ -41,7 +42,8 @@ Vue.component('column-component', {
                 :key="card.id"
                 :card="card"
                 :columnIndex="columnIndex"
-                @delete-card="$emit('delete-card', columnIndex, index)">
+                @delete-card="$emit('delete-card', columnIndex, index)"
+                @move-card="(toColumnIndex) => $emit('move-card', columnIndex, index, toColumnIndex)">
             </card-component>
             <button v-if="columnIndex === 0" @click="$emit('add-card')">Добавить карточку</button>
         </div>
@@ -113,6 +115,11 @@ new Vue({
         },
         deleteCard(columnIndex, cardIndex) {
             this.columns[columnIndex].cards.splice(cardIndex, 1)
+            this.saveData()
+        },
+        moveCard(fromColumnIndex, cardIndex, toColumnIndex) {
+            const card = this.columns[fromColumnIndex].cards.splice(cardIndex, 1)[0]
+            this.columns[toColumnIndex].cards.push(card)
             this.saveData()
         },
         closeModal() {
