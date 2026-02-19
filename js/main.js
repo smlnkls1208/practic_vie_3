@@ -18,6 +18,7 @@ Vue.component('card-component', {
             <div class="card-buttons">
                 <button v-if="columnIndex < 3" @click="$emit('move-card', columnIndex + 1)" class="move">Переместить</button>
                 <button v-if="columnIndex === 0" @click="$emit('delete-card')" class="delete">Удалить</button>
+                <button v-if="columnIndex === 2" @click="$emit('move-card', 1)" class="return">Вернуть в работу</button>
             </div>
         </div>
     `
