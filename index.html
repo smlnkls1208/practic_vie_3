@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kanban Доска</title>
+    <link rel="stylesheet" href="css/main.css">
+    <script defer src="js/vue-dev.js"></script>
+    <script defer src="js/main.js"></script>
+</head>
+<body>
+<div id="app">
+    <div class="modal-overlay" v-if="isModalVisible">
+        <form class="modal" @submit.prevent="saveCard">
+            <h2>{{ isEditing ? 'Редактирование карточки' : 'Создание карточки' }}</h2>
+            <label for="title">Заголовок</label>
+            <input id="title" type="text" v-model="currentCard.title" required>
+
+            <label for="description">Описание</label>
+            <textarea id="description" v-model="currentCard.description" required></textarea>
+
+            <label for="deadline">Дедлайн</label>
+            <input id="deadline" type="date" v-model="currentCard.deadline" required>
+
+            <button type="submit">{{ isEditing ? 'Сохранить' : 'Создать' }}</button>
+            <button type="button" @click="closeModal">Закрыть</button>
+        </form>
+    </div>
+    <div class="columns">
+        <column-component
+                v-for="(column, index) in columns"
+                :key="index"
+                :column="column"
+                :column-index="index"
+                @add-card="openModal"
+                @edit-card="editCard"
+                @delete-card="deleteCard"
+                @move-card="moveCard">
+        </column-component>
+    </div>
+</div>
+</body>
+</html>
