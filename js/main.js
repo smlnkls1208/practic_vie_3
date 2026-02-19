@@ -18,10 +18,18 @@ Vue.component('card-component', {
             <div class="card-buttons">
                 <button v-if="columnIndex < 3" @click="$emit('move-card', columnIndex + 1)" class="move">Переместить</button>
                 <button v-if="columnIndex === 0" @click="$emit('delete-card')" class="delete">Удалить</button>
-                <button v-if="columnIndex === 2" @click="$emit('move-card', 1)" class="return">Вернуть в работу</button>
+                <button v-if="columnIndex === 2" @click="returnToWork" class="return">Вернуть в работу</button>
             </div>
         </div>
-    `
+    `,
+    methods: {
+        returnToWork() {
+            const reason = prompt('Укажите причину возврата:')
+            if (reason) {
+                this.$emit('move-card', 1, reason)
+            }
+        }
+    }
 })
 
 Vue.component('column-component', {
@@ -44,7 +52,7 @@ Vue.component('column-component', {
                 :card="card"
                 :columnIndex="columnIndex"
                 @delete-card="$emit('delete-card', columnIndex, index)"
-                @move-card="(toColumnIndex) => $emit('move-card', columnIndex, index, toColumnIndex)">
+                @move-card="(toColumnIndex, reason) => $emit('move-card', columnIndex, index, toColumnIndex, reason)">
             </card-component>
             <button v-if="columnIndex === 0" @click="$emit('add-card')">Добавить карточку</button>
         </div>
@@ -118,8 +126,11 @@ new Vue({
             this.columns[columnIndex].cards.splice(cardIndex, 1)
             this.saveData()
         },
-        moveCard(fromColumnIndex, cardIndex, toColumnIndex) {
+        moveCard(fromColumnIndex, cardIndex, toColumnIndex, reason) {
             const card = this.columns[fromColumnIndex].cards.splice(cardIndex, 1)[0]
+            if (reason) {
+                card.returnReason = reason
+            }
             this.columns[toColumnIndex].cards.push(card)
             this.saveData()
         },
