@@ -1,0 +1,159 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f9f9f9;
+    margin: 0;
+    padding: 20px;
+}
+
+.columns {
+    display: flex;
+    justify-content: space-around;
+    gap: 20px;
+}
+
+.column {
+    width: 23%;
+    background: #ffffff;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.column h2 {
+    margin-top: 0;
+    font-size: 18px;
+    color: #333;
+    border-bottom: 2px solid #42b983;
+    padding-bottom: 10px;
+}
+
+.card {
+    background: #fafafa;
+    padding: 0;
+    margin-bottom: 15px;
+    border-radius: 12px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+    border: 1px solid #e0e0e0;
+    overflow: hidden;
+}
+
+.card:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+    transform: scale(1.02);
+}
+
+.card h3 {
+    margin: 0;
+    padding: 12px 15px;
+    font-size: 16px;
+    color: white;
+    background: #757575;
+    font-weight: 600;
+    text-align: center;
+}
+
+.card p {
+    margin: 8px 0;
+    padding: 0 15px;
+    font-size: 13px;
+    color: #666;
+    line-height: 1.5;
+}
+
+.card p:first-of-type {
+    padding-top: 12px;
+}
+
+.card p:last-of-type {
+    padding-bottom: 12px;
+}
+
+.card p strong {
+    color: #333;
+    font-weight: 600;
+}
+
+.card.completed h3 {
+    background: #4caf50;
+}
+
+.card.overdue h3 {
+    background: #f44336;
+}
+
+.card.in-progress h3 {
+    background: #ff6b9d;
+}
+
+.card.testing h3 {
+    background: #ffa726;
+}
+
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+}
+
+.modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    width: 300px;
+    max-width: 90%;
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.modal h2 {
+    margin-bottom: 15px;
+    font-size: 20px;
+    text-align: center;
+    color: #42b983;
+}
+
+.modal input[type="text"],
+.modal textarea,
+.modal input[type="date"] {
+    padding: 8px;
+    margin: 5px 0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 14px;
+}
+
+.modal button {
+    padding: 10px;
+    background-color: #42b983;
+    border: none;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    margin-top: 10px;
+    border-radius: 5px;
+    transition: background-color 0.2s;
+}
+
+.modal button:hover {
+    background-color: #368a6d;
+}
+
+.modal button[type="button"] {
+    background-color: #757575;
+}
+
+.modal button[type="button"]:hover {
+    background-color: #616161;
+}
