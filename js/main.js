@@ -107,8 +107,10 @@ new Vue({
                 title: '',
                 description: '',
                 deadline: '',
-                createdAt: ''
-            }
+                createdAt: '',
+                updatedAt: ''
+            },
+            editIndex: null
         }
     },
     methods: {
@@ -119,11 +121,23 @@ new Vue({
                 title: '',
                 description: '',
                 deadline: '',
-                createdAt: new Date().toLocaleString()
+                createdAt: new Date().toLocaleString(),
+                updatedAt: ''
             }
         },
+        editCard(columnIndex, cardIndex) {
+            this.isModalVisible = true
+            this.isEditing = true
+            this.currentCard = { ...this.columns[columnIndex].cards[cardIndex] }
+            this.editIndex = { columnIndex, cardIndex }
+        },
         saveCard() {
-            this.columns[0].cards.push({ ...this.currentCard, id: Date.now() })
+            if (this.isEditing) {
+                this.currentCard.updatedAt = new Date().toLocaleString()
+                Vue.set(this.columns[this.editIndex.columnIndex].cards, this.editIndex.cardIndex, { ...this.currentCard })
+            } else {
+                this.columns[0].cards.push({ ...this.currentCard, id: Date.now() })
+            }
             this.closeModal()
             this.saveData()
         },
