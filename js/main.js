@@ -10,14 +10,16 @@ Vue.component('card-component', {
         }
     },
     template: `
-        <div class="card">
+        <div class="card" :class="{ 'completed': card.status === 'Выполнено в срок', 'overdue': card.status === 'Просрочено', 'in-progress': columnIndex === 1, 'testing': columnIndex === 2 }">
             <h3>{{ card.title }}</h3>
             <p>{{ card.description }}</p>
             <p><strong>Создано:</strong> {{ card.createdAt }}</p>
             <p><strong>Дедлайн:</strong> {{ card.deadline }}</p>
+            <p><strong>Последнее редактирование:</strong> {{ card.updatedAt || 'Не редактировалось' }}</p>
             <p v-if="card.returnReason"><strong>Причина возврата:</strong> {{ card.returnReason }}</p>
             <p v-if="card.status"><strong>Статус:</strong> {{ card.status }}</p>
             <div class="card-buttons">
+                <button v-if="columnIndex !== 3" @click="$emit('edit-card')" class="edit">Редактировать</button>
                 <button v-if="columnIndex < 3" @click="$emit('move-card', columnIndex + 1)" class="move">Переместить</button>
                 <button v-if="columnIndex === 0" @click="$emit('delete-card')" class="delete">Удалить</button>
                 <button v-if="columnIndex === 2" @click="returnToWork" class="return">Вернуть в работу</button>
@@ -53,6 +55,7 @@ Vue.component('column-component', {
                 :key="card.id"
                 :card="card"
                 :columnIndex="columnIndex"
+                @edit-card="$emit('edit-card', columnIndex, index)"
                 @delete-card="$emit('delete-card', columnIndex, index)"
                 @move-card="(toColumnIndex, reason) => $emit('move-card', columnIndex, index, toColumnIndex, reason)">
             </card-component>
