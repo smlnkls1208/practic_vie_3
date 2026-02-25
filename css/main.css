@@ -151,6 +151,46 @@ body {
     color: #555;
 }
 
+.card .task-list {
+    padding: 12px 15px;
+    margin: 8px 0;
+    background: #e3f2fd;
+}
+
+.card .task-list strong {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 13px;
+    color: #1565c0;
+}
+
+.card .task-list ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.card .task-list li {
+    padding: 4px 0;
+    font-size: 12px;
+}
+
+.card .task-list label {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+}
+
+.card .task-list input[type="checkbox"] {
+    margin-right: 8px;
+    cursor: pointer;
+}
+
+.card .task-list .completed-task {
+    text-decoration: line-through;
+    color: #999;
+}
+
 .card-buttons {
     display: flex;
     flex-wrap: wrap;
@@ -194,6 +234,11 @@ body {
 
 .card button.return {
     background: #ff9800;
+    color: white;
+}
+
+.card button.tasks {
+    background: #2196f3;
     color: white;
 }
 
@@ -263,4 +308,104 @@ body {
 
 .modal button[type="button"]:hover {
     background-color: #616161;
+}
+
+.modal.task-modal {
+    width: 400px;
+}
+
+.modal .no-tasks {
+    text-align: center;
+    color: #999;
+    font-style: italic;
+    padding: 20px;
+    margin: 10px 0;
+}
+
+.modal .task-section {
+    margin: 10px 0;
+}
+
+.modal .task-section label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #333;
+}
+
+.modal .task-input-group {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 10px;
+}
+
+.modal .task-input-group input {
+    flex: 1;
+    margin: 0;
+}
+
+.modal .add-task-btn {
+    width: 40px;
+    padding: 8px;
+    background: #42b983;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 20px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    margin: 0;
+}
+
+.modal .add-task-btn:hover {
+    background: #368a6d;
+}
+
+.modal .modal-task-list {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 15px 0;
+    max-height: 250px;
+    overflow-y: auto;
+    border: 1px solid #e0e0e0;
+    border-radius: 5px;
+    background: #fafafa;
+}
+
+.modal .modal-task-list li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 12px;
+    border-bottom: 1px solid #e0e0e0;
+    font-size: 13px;
+}
+
+.modal .modal-task-list li:last-child {
+    border-bottom: none;
+}
+
+.modal .modal-task-list li span {
+    flex: 1;
+}
+
+.modal .remove-task-btn {
+    width: 24px;
+    height: 24px;
+    padding: 0;
+    background: #f44336;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    font-size: 18px;
+    line-height: 1;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    flex-shrink: 0;
+    margin: 0;
+}
+
+.modal .remove-task-btn:hover {
+    background: #d32f2f;
 }

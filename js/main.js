@@ -16,6 +16,17 @@ Vue.component('card-component', {
             <p><strong>Создано:</strong> {{ card.createdAt }}</p>
             <p><strong>Дедлайн:</strong> {{ card.deadline }}</p>
             <p><strong>Последнее редактирование:</strong> {{ card.updatedAt || 'Не редактировалось' }}</p>
+            <div v-if="card.tasks && card.tasks.length > 0" class="task-list">
+                <strong>Задачи ({{ completedTasksCount }}/{{ card.tasks.length }}):</strong>
+                <ul>
+                    <li v-for="(task, idx) in card.tasks" :key="idx">
+                        <label>
+                            <input type="checkbox" :checked="task.completed" @change="$emit('toggle-task', idx)" :disabled="columnIndex === 3">
+                            <span :class="{ 'completed-task': task.completed }">{{ task.text }}</span>
+                        </label>
+                    </li>
+                </ul>
+            </div>
             <div v-if="card.returnReasons && card.returnReasons.length > 0" class="return-history">
                 <strong>История возвратов:</strong>
                 <ul>
@@ -28,12 +39,19 @@ Vue.component('card-component', {
             <p v-if="card.status"><strong>Статус:</strong> {{ card.status }}</p>
             <div class="card-buttons">
                 <button v-if="columnIndex !== 3" @click="$emit('edit-card')" class="edit">Редактировать</button>
+                <button v-if="columnIndex !== 3" @click="$emit('manage-tasks')" class="tasks">Задачи</button>
                 <button v-if="columnIndex < 3" @click="$emit('move-card', columnIndex + 1)" class="move">Переместить</button>
                 <button v-if="columnIndex === 0" @click="$emit('delete-card')" class="delete">Удалить</button>
                 <button v-if="columnIndex === 2" @click="returnToWork" class="return">Вернуть в работу</button>
             </div>
         </div>
     `,
+    computed: {
+        completedTasksCount() {
+            if (!this.card.tasks) return 0
+            return this.card.tasks.filter(t => t.completed).length
+        }
+    },
     methods: {
         returnToWork() {
             const reason = prompt('Укажите причину возврата:')
@@ -65,7 +83,9 @@ Vue.component('column-component', {
                 :columnIndex="columnIndex"
                 @edit-card="$emit('edit-card', columnIndex, index)"
                 @delete-card="$emit('delete-card', columnIndex, index)"
-                @move-card="(toColumnIndex, reason) => $emit('move-card', columnIndex, index, toColumnIndex, reason)">
+                @move-card="(toColumnIndex, reason) => $emit('move-card', columnIndex, index, toColumnIndex, reason)"
+                @toggle-task="(taskIndex) => $emit('toggle-task', columnIndex, index, taskIndex)"
+                @manage-tasks="$emit('manage-tasks', columnIndex, index)">
             </card-component>
             <button v-if="columnIndex === 0" @click="$emit('add-card')">Добавить карточку</button>
         </div>
@@ -149,15 +169,20 @@ new Vue({
                 }
             ],
             isModalVisible: false,
+            isTaskModalVisible: false,
             isEditing: false,
             currentCard: {
                 title: '',
                 description: '',
                 deadline: '',
                 createdAt: '',
-                updatedAt: ''
+                updatedAt: '',
+                tasks: []
             },
-            editIndex: null
+            editIndex: null,
+            newTaskText: '',
+            taskEditIndex: null,
+            editingCardTasks: null
         }
     },
     methods: {
@@ -169,8 +194,10 @@ new Vue({
                 description: '',
                 deadline: '',
                 createdAt: new Date().toLocaleString(),
-                updatedAt: ''
+                updatedAt: '',
+                tasks: []
             }
+            this.newTaskText = ''
         },
         editCard(columnIndex, cardIndex) {
             this.isModalVisible = true
@@ -193,12 +220,23 @@ new Vue({
             this.saveData()
         },
         moveCard(fromColumnIndex, cardIndex, toColumnIndex, reason) {
-            const card = this.columns[fromColumnIndex].cards.splice(cardIndex, 1)[0]
+            const card = this.columns[fromColumnIndex].cards[cardIndex]
+
             if (toColumnIndex === 3) {
+                if (card.tasks && card.tasks.length > 0) {
+                    const allCompleted = card.tasks.every(t => t.completed)
+                    if (!allCompleted) {
+                        alert('Невозможно переместить карточку в "Выполненные задачи". Не все задачи выполнены!')
+                        return
+                    }
+                }
                 const deadline = new Date(card.deadline)
                 const now = new Date()
                 card.status = deadline < now ? 'Просрочено' : 'Выполнено в срок'
             }
+
+            this.columns[fromColumnIndex].cards.splice(cardIndex, 1)
+
             if (reason) {
                 if (!card.returnReasons) {
                     card.returnReasons = []
@@ -210,6 +248,59 @@ new Vue({
             }
             this.columns[toColumnIndex].cards.push(card)
             this.saveData()
+        },
+        toggleTask(columnIndex, cardIndex, taskIndex) {
+            const card = this.columns[columnIndex].cards[cardIndex]
+            card.tasks[taskIndex].completed = !card.tasks[taskIndex].completed
+            this.saveData()
+        },
+        openTaskModal(columnIndex, cardIndex) {
+            this.isTaskModalVisible = true
+            this.taskEditIndex = { columnIndex, cardIndex }
+            const card = this.columns[columnIndex].cards[cardIndex]
+            if (!card.tasks) {
+                Vue.set(card, 'tasks', [])
+            }
+            this.editingCardTasks = card.tasks
+            this.newTaskText = ''
+        },
+        closeTaskModal() {
+            this.isTaskModalVisible = false
+            this.taskEditIndex = null
+            this.editingCardTasks = null
+            this.newTaskText = ''
+            this.saveData()
+        },
+        addTaskToCard() {
+            if (this.newTaskText.trim() && this.taskEditIndex) {
+                const card = this.columns[this.taskEditIndex.columnIndex].cards[this.taskEditIndex.cardIndex]
+                if (!card.tasks) {
+                    Vue.set(card, 'tasks', [])
+                }
+                card.tasks.push({
+                    text: this.newTaskText.trim(),
+                    completed: false
+                })
+                this.newTaskText = ''
+            }
+        },
+        removeTaskFromCard(taskIndex) {
+            if (this.taskEditIndex) {
+                const card = this.columns[this.taskEditIndex.columnIndex].cards[this.taskEditIndex.cardIndex]
+                card.tasks.splice(taskIndex, 1)
+            }
+        },
+        addTask() {
+            if (this.newTaskText.trim()) {
+                this.currentCard.tasks.push({
+                    text: this.newTaskText.trim(),
+                    completed: false
+                })
+                this.newTaskText = ''
+            }
+        },
+        removeTask(index) {
+            this.currentCard.tasks.splice(index, 1)
         },
         closeModal() {
             this.isModalVisible = false

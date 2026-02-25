@@ -26,6 +26,23 @@
             <button type="button" @click="closeModal">Закрыть</button>
         </form>
     </div>
+    <div class="modal-overlay" v-if="isTaskModalVisible">
+        <div class="modal task-modal">
+            <h2>Управление задачами</h2>
+            <div class="task-input-group">
+                <input type="text" v-model="newTaskText" placeholder="Добавить задачу..." @keyup.enter="addTaskToCard">
+                <button type="button" @click="addTaskToCard" class="add-task-btn">+</button>
+            </div>
+            <ul v-if="editingCardTasks && editingCardTasks.length > 0" class="modal-task-list">
+                <li v-for="(task, idx) in editingCardTasks" :key="idx">
+                    <span>{{ task.text }}</span>
+                    <button type="button" @click="removeTaskFromCard(idx)" class="remove-task-btn">×</button>
+                </li>
+            </ul>
+            <p v-else class="no-tasks">Задачи отсутствуют</p>
+            <button type="button" @click="closeTaskModal">Закрыть</button>
+        </div>
+    </div>
     <div class="columns">
         <column-component
                 v-for="(column, index) in columns"
@@ -35,7 +52,9 @@
                 @add-card="openModal"
                 @edit-card="editCard"
                 @delete-card="deleteCard"
-                @move-card="moveCard">
+                @move-card="moveCard"
+                @toggle-task="toggleTask"
+                @manage-tasks="openTaskModal">
         </column-component>
     </div>
 </div>
