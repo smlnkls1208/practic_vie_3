@@ -110,6 +110,47 @@ body {
     background: #ffa726;
 }
 
+.card .return-history {
+    padding: 12px 15px;
+    margin: 8px 0;
+    background: #fff3e0;
+}
+
+.card .return-history strong {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 13px;
+    color: #e65100;
+}
+
+.card .return-history ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.card .return-history li {
+    padding: 6px 0;
+    font-size: 12px;
+    color: #666;
+    border-bottom: 1px solid #ffe0b2;
+}
+
+.card .return-history li:last-child {
+    border-bottom: none;
+}
+
+.card .return-history .return-date {
+    display: inline-block;
+    font-weight: 600;
+    color: #f57c00;
+    margin-right: 8px;
+}
+
+.card .return-history .return-reason {
+    color: #555;
+}
+
 .card-buttons {
     display: flex;
     flex-wrap: wrap;

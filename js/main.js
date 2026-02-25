@@ -16,7 +16,15 @@ Vue.component('card-component', {
             <p><strong>Создано:</strong> {{ card.createdAt }}</p>
             <p><strong>Дедлайн:</strong> {{ card.deadline }}</p>
             <p><strong>Последнее редактирование:</strong> {{ card.updatedAt || 'Не редактировалось' }}</p>
-            <p v-if="card.returnReason"><strong>Причина возврата:</strong> {{ card.returnReason }}</p>
+            <div v-if="card.returnReasons && card.returnReasons.length > 0" class="return-history">
+                <strong>История возвратов:</strong>
+                <ul>
+                    <li v-for="(item, idx) in card.returnReasons" :key="idx">
+                        <span class="return-date">{{ item.date }}</span>
+                        <span class="return-reason">{{ item.reason }}</span>
+                    </li>
+                </ul>
+            </div>
             <p v-if="card.status"><strong>Статус:</strong> {{ card.status }}</p>
             <div class="card-buttons">
                 <button v-if="columnIndex !== 3" @click="$emit('edit-card')" class="edit">Редактировать</button>
@@ -192,7 +200,13 @@ new Vue({
                 card.status = deadline < now ? 'Просрочено' : 'Выполнено в срок'
             }
             if (reason) {
-                card.returnReason = reason
+                if (!card.returnReasons) {
+                    card.returnReasons = []
+                }
+                card.returnReasons.push({
+                    date: new Date().toLocaleString(),
+                    reason: reason
+                })
             }
             this.columns[toColumnIndex].cards.push(card)
             this.saveData()
